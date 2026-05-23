@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class SymptomInputScreen extends ConsumerStatefulWidget {
   final Map<String, bool> checklist;
@@ -23,7 +24,13 @@ class _SymptomInputScreenState extends ConsumerState<SymptomInputScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Symptom Input')),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.go('/home'),
+        ),
+        title: const Text('Symptom Input'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

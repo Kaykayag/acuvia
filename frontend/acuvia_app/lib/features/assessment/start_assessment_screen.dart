@@ -114,7 +114,7 @@ class _StartAssessmentScreenState extends State<StartAssessmentScreen> {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => context.pop(),
+            onTap: () => context.go('/home'),
             child: const Icon(Icons.arrow_back, size: 24, color: _textDark),
           ),
           const Expanded(

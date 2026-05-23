@@ -272,7 +272,12 @@ class _HomeScreenState extends State<HomeScreen> {
               return GestureDetector(
                 onTap: () {
                   setState(() => _currentIndex = index);
-                  // TODO: navigate
+                  switch (index) {
+                    case 0: context.go('/home'); break;
+                    case 1: context.go('/history'); break;
+                    case 2: context.go('/learn'); break; // TODO: implement learn route
+                    case 3: context.go('/profile'); break; // TODO: implement profile route
+                  }
                 },
                 behavior: HitTestBehavior.opaque,
                 child: SizedBox(
