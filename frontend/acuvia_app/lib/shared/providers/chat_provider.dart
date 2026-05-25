@@ -18,9 +18,9 @@ class ChatController extends StateNotifier<List<ChatTurn>> {
     state = [...state, userTurn];
     _sending = true;
     try {
-      final resp = await _ref.read(chatRepositoryProvider).send(message);
+      final reply = await _ref.read(chatRepositoryProvider).sendMessage(message);
       // Append assistant reply
-      final asst = ChatTurn(role: 'assistant', content: resp.response);
+      final asst = ChatTurn(role: 'assistant', content: reply);
       state = [...state, asst];
     } finally {
       _sending = false;

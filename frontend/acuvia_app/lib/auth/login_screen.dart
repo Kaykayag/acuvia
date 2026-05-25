@@ -444,6 +444,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),
+
+
+
+          
           elevation: 0,
         ),
         child: Row(
