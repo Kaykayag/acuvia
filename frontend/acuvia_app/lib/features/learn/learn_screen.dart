@@ -277,12 +277,12 @@ class _CategoryCard extends StatelessWidget {
         border: Border.all(
           color: isExpanded
               ? category.color
-              : category.color.withOpacity(0.35),
+              : category.color.withValues(alpha: 0.35),
           width: isExpanded ? 1.8 : 1.2,
         ),
         boxShadow: [
           BoxShadow(
-            color: category.color.withOpacity(0.08),
+            color: category.color.withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -364,7 +364,7 @@ class _CategoryCard extends StatelessWidget {
         Divider(
             height: 1,
             thickness: 1,
-            color: category.color.withOpacity(0.2)),
+            color: category.color.withValues(alpha: 0.2)),
         Padding(
           padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
           child: Column(
@@ -401,19 +401,19 @@ class _SubItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: color.withOpacity(0.06),
+      color: color.withValues(alpha: 0.06),
       borderRadius: BorderRadius.circular(10),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(10),
-        splashColor: color.withOpacity(0.15),
+        splashColor: color.withValues(alpha: 0.15),
         child: Container(
           padding:
               const EdgeInsets.symmetric(vertical: 11, horizontal: 14),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border:
-                Border.all(color: color.withOpacity(0.18), width: 1),
+                Border.all(color: color.withValues(alpha: 0.18), width: 1),
           ),
           child: Row(
             children: [
@@ -430,7 +430,7 @@ class _SubItemTile extends StatelessWidget {
                 ),
               ),
               Icon(Icons.chevron_right,
-                  color: color.withOpacity(0.7), size: 18),
+                  color: color.withValues(alpha: 0.7), size: 18),
             ],
           ),
         ),

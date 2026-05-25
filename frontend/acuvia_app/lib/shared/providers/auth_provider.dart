@@ -1,15 +1,18 @@
+// lib/shared/providers/auth_provider.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import '../../../core/http_client.dart';
 import '../../../data/repositories/auth_repository.dart';
 
 final authStateProvider =
-    StateNotifierProvider<AuthController, AsyncValue<void>>(AuthController.new);
+    StateNotifierProvider<AuthController, AsyncValue<void>>(
+  AuthController.new,
+);
 
 class AuthController extends StateNotifier<AsyncValue<void>> {
   AuthController(this._ref) : super(const AsyncValue.data(null));
   final Ref _ref;
 
+  /// Login with email + password → stores JWT token on success
   Future<bool> login(String email, String password) async {
     state = const AsyncValue.loading();
     try {
@@ -25,6 +28,7 @@ class AuthController extends StateNotifier<AsyncValue<void>> {
     }
   }
 
+  /// Register new user → saves to DB and stores JWT token on success
   Future<bool> register(
     String email,
     String password, {
@@ -42,16 +46,12 @@ class AuthController extends StateNotifier<AsyncValue<void>> {
       state = AsyncValue.error(e, st);
       return false;
     }
-  } // <-- This is the bracket I moved to close out the register function!
+  }
 
-  /// Placeholder Google sign-in flow. Integrate `google_sign_in` or
-  /// your platform-specific implementation and exchange the provider token
-  /// with your backend to retrieve an auth token.
+  /// Google Sign-In placeholder — wire up google_sign_in package when ready
   Future<bool> signInWithGoogle() async {
     state = const AsyncValue.loading();
     try {
-      // TODO: replace this placeholder with a real Google Sign-In flow.
-      // For now, we emulate a failure so callers can handle the result.
       await Future.delayed(const Duration(milliseconds: 500));
       state = const AsyncValue.data(null);
       return false;
@@ -61,7 +61,9 @@ class AuthController extends StateNotifier<AsyncValue<void>> {
     }
   }
 
+  /// Clear token — effectively logs the user out
   void logout() {
     _ref.read(authTokenProvider.notifier).state = null;
+    state = const AsyncValue.data(null);
   }
 }

@@ -1,18 +1,45 @@
 # backend/app/services/chatbot.py
-from typing import List
-from app.db import models
-from sqlalchemy.orm import Session
+import httpx
+from app.core.config import settings
 
-SAFETY_PREFIX = (
-    "I am an assistant that helps with urgency advice, not diagnosis. "
-    "For life-threatening symptoms, call emergency services. "
-)
+SYSTEM_PROMPT = """You are Acuvia Assistant, a medical triage chatbot in a mobile health app.
+Your role is to:
+- Ask about the patient's symptoms in a clear, empathetic way
+- Help them understand the urgency of their condition
+- Guide them on next steps (home care, clinic visit, or emergency)
 
-def generate_response(user_message: str) -> str:
-    # Very simple rule-based response; in production integrate with a hosted LLM and a safety prompt.
-    msg = user_message.lower()
-    if "diagnose" in msg or "what do i have" in msg:
-        return SAFETY_PREFIX + "I cannot diagnose conditions. I can help assess urgency and next steps."
-    if "emergency" in msg or "chest pain" in msg or "shortness of breath" in msg:
-        return SAFETY_PREFIX + "This sounds potentially serious. Please seek emergency care now."
-    return SAFETY_PREFIX + "Based on your message, consider using the assessment tool or describe your symptoms in detail."
+Rules:
+- Never diagnose. Always remind the user you are not a doctor.
+- If symptoms sound life-threatening (chest pain + sweating, stroke signs, severe breathing), 
+  immediately tell them to call emergency services.
+- Keep replies concise — 2 to 4 sentences max.
+- Always respond in the same language the patient used.
+- End with a follow-up question to gather more detail when needed."""
+
+
+async def get_medgemma_reply(conversation: list[dict]) -> str:
+    """
+    Sends the full conversation history to MedGemma via ngrok tunnel.
+    `conversation` is a list of {"role": "user"/"assistant", "content": "..."} dicts.
+    """
+    # Build the prompt: system prompt prepended to the first user message
+    messages = []
+    for i, msg in enumerate(conversation):
+        if i == 0 and msg["role"] == "user":
+            messages.append({
+                "role": "user",
+                "content": SYSTEM_PROMPT + "\n\n" + msg["content"],
+            })
+        else:
+            messages.append(msg)
+
+    payload = {"messages": messages}
+
+    async with httpx.AsyncClient(timeout=60.0) as client:
+        resp = await client.post(
+            f"{settings.MEDGEMMA_URL}/chat",
+            json=payload,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        return data.get("reply", "Sorry, I could not generate a response.")

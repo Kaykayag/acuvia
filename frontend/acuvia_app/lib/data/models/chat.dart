@@ -1,23 +1,49 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-part 'chat.freezed.dart';
-part 'chat.g.dart';
+class ChatTurn {
+  final String role;
+  final String content;
 
-@freezed
-class ChatTurn with _$ChatTurn { // ignore: non_abstract_class_inherits_abstract_member
-  const factory ChatTurn({required String role, required String content}) =
-      _ChatTurn;
+  const ChatTurn({
+    required this.role,
+    required this.content,
+  });
 
-  factory ChatTurn.fromJson(Map<String, dynamic> json) =>
-      _$ChatTurnFromJson(json);
+  factory ChatTurn.fromJson(Map<String, dynamic> json) {
+    return ChatTurn(
+      role: json['role'] as String,
+      content: json['content'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'role': role,
+      'content': content,
+    };
+  }
 }
 
-@freezed
-class ChatResponse with _$ChatResponse { // ignore: non_abstract_class_inherits_abstract_member
-  const factory ChatResponse({
-    required String response,
-    required List<ChatTurn> messages,
-  }) = _ChatResponse;
+class ChatResponse {
+  final String response;
+  final List<ChatTurn> messages;
 
-  factory ChatResponse.fromJson(Map<String, dynamic> json) =>
-      _$ChatResponseFromJson(json);
+  const ChatResponse({
+    required this.response,
+    required this.messages,
+  });
+
+  factory ChatResponse.fromJson(Map<String, dynamic> json) {
+    return ChatResponse(
+      response: json['response'] as String,
+      messages: (json['messages'] as List<dynamic>)
+          .map((e) => ChatTurn.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'response': response,
+      'messages': messages.map((e) => e.toJson()).toList(),
+    };
+  }
 }

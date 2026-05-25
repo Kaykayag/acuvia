@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../shared/providers/auth_provider.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -10,24 +11,25 @@ class RegisterScreen extends ConsumerStatefulWidget {
 }
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _formKey                   = GlobalKey<FormState>();
+  final _nameController            = TextEditingController();
+  final _emailController           = TextEditingController();
+  final _passwordController        = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
-  bool _isLoading = false;
-  bool _agreeToTerms = false;
+  bool    _obscurePassword        = true;
+  bool    _obscureConfirmPassword = true;
+  bool    _isLoading              = false;
+  bool    _agreeToTerms           = false;
+  String? _registerError;           // ← shown above the Full Name field
 
-  // ── Theme colors (same as LoginScreen) ────────────────────────────────
-  static const Color _bgColor = Color(0xFFD6EAF8);
-  static const Color _cardColor = Color(0xFFDEEFF8);
+  // ── Theme colors ───────────────────────────────────────────────────────
+  static const Color _bgColor      = Color(0xFFD6EAF8);
+  static const Color _cardColor    = Color(0xFFDEEFF8);
   static const Color _primaryColor = Color(0xFF1A7A9B);
-  static const Color _accentColor = Color(0xFF1A7A9B);
-  static const Color _fieldBorder = Color(0xFFB0C8D8);
-  static const Color _hintColor = Color(0xFF8AAABB);
+  static const Color _accentColor  = Color(0xFF1A7A9B);
+  static const Color _fieldBorder  = Color(0xFFB0C8D8);
+  static const Color _hintColor    = Color(0xFF8AAABB);
 
   @override
   void dispose() {
@@ -39,59 +41,60 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   // ── Handlers ────────────────────────────────────────────────────────────
-
   Future<void> _handleRegister() async {
+    // Clear previous error
+    setState(() => _registerError = null);
+
     if (!_formKey.currentState!.validate()) return;
 
     if (!_agreeToTerms) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please agree to the Terms & Conditions')),
-      );
+      setState(() =>
+          _registerError = 'Please agree to the Terms & Conditions.');
       return;
     }
 
     setState(() => _isLoading = true);
 
-    // TODO: wire up your Riverpod register call, e.g.:
-    // final success = await ref.read(authStateProvider.notifier).register(
-    //   name: _nameController.text.trim(),
-    //   email: _emailController.text.trim(),
-    //   password: _passwordController.text,
-    // );
+    final success = await ref.read(authStateProvider.notifier).register(
+          _emailController.text.trim(),
+          _passwordController.text,
+          fullName: _nameController.text.trim(),
+        );
 
-    await Future.delayed(const Duration(seconds: 2)); // remove in production
     setState(() => _isLoading = false);
-
     if (!mounted) return;
 
-    // On success navigate to login or home:
-    // if (success) {
-    //   context.go('/login');
-    // } else {
-    //   final state = ref.read(authStateProvider);
-    //   final message = state.hasError ? state.error.toString() : 'Registration failed';
-    //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-    // }
+    if (success) {
+      context.go('/home');
+    } else {
+      final authState = ref.read(authStateProvider);
+      setState(() {
+        _registerError = _friendlyError(
+          authState.hasError ? authState.error.toString() : '',
+        );
+      });
+    }
+  }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Account created successfully!')),
-    );
-    context.go('/login');
+  String _friendlyError(String error) {
+    if (error.contains('400') || error.contains('already registered')) {
+      return 'This email is already registered. Try logging in.';
+    }
+    if (error.contains('SocketException') || error.contains('connect')) {
+      return 'Cannot reach server. Check your connection.';
+    }
+    return 'Registration failed. Please try again.';
   }
 
   void _handleGoogleSignUp() {
-    // TODO: wire up Google Sign-In
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Google Sign-Up coming soon!')),
     );
   }
 
-  void _handleLogin() {
-    context.go('/login');
-  }
+  void _handleLogin() => context.go('/login');
 
   // ── Build ────────────────────────────────────────────────────────────────
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,11 +106,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // ── Logo ──────────────────────────────────────────────────
                 _buildLogo(),
                 const SizedBox(height: 36),
-
-                // ── Register Card ─────────────────────────────────────────
                 _buildRegisterCard(),
               ],
             ),
@@ -117,7 +117,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     );
   }
 
-  // ── Logo widget ──────────────────────────────────────────────────────────
+  // ── Logo ─────────────────────────────────────────────────────────────────
   Widget _buildLogo() {
     return Container(
       width: 90,
@@ -126,7 +126,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         color: Colors.white,
         shape: BoxShape.circle,
         boxShadow: [
-          BoxShadow(color: Color(0x1A000000), blurRadius: 12, offset: Offset(0, 4)),
+          BoxShadow(
+              color: Color(0x1A000000), blurRadius: 12, offset: Offset(0, 4)),
         ],
       ),
       child: Padding(
@@ -144,7 +145,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         color: _cardColor,
         borderRadius: BorderRadius.circular(28),
         boxShadow: const [
-          BoxShadow(color: Color(0x1A000000), blurRadius: 20, offset: Offset(0, 6)),
+          BoxShadow(
+              color: Color(0x1A000000), blurRadius: 20, offset: Offset(0, 6)),
         ],
       ),
       child: Form(
@@ -165,12 +167,49 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             ),
             const SizedBox(height: 28),
 
-            // ── Full name field ──────────────────────────────────────────
+            // ── Inline error banner (above Full Name) ────────────────────
+            if (_registerError != null) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade50,
+                  border: Border.all(color: Colors.red.shade200),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.error_outline_rounded,
+                        color: Colors.red.shade600, size: 16),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        _registerError!,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.red.shade700,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
+            ],
+
+            // ── Full name ────────────────────────────────────────────────
             _buildTextField(
               controller: _nameController,
               hint: 'Full Name',
               prefixIcon: Icons.person_outline_rounded,
               keyboardType: TextInputType.name,
+              hasError: _registerError != null,
+              onChanged: (_) {
+                if (_registerError != null) {
+                  setState(() => _registerError = null);
+                }
+              },
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return 'Full name is required';
                 if (v.trim().length < 2) return 'Enter a valid name';
@@ -179,27 +218,41 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             ),
             const SizedBox(height: 16),
 
-            // ── Email field ──────────────────────────────────────────────
+            // ── Email ────────────────────────────────────────────────────
             _buildTextField(
               controller: _emailController,
               hint: 'Email',
               prefixIcon: Icons.email_outlined,
               keyboardType: TextInputType.emailAddress,
+              hasError: _registerError != null,
+              onChanged: (_) {
+                if (_registerError != null) {
+                  setState(() => _registerError = null);
+                }
+              },
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return 'Email is required';
                 final emailRegex = RegExp(r'^[\w.+-]+@[\w-]+\.[a-z]{2,}$');
-                if (!emailRegex.hasMatch(v.trim())) return 'Enter a valid email';
+                if (!emailRegex.hasMatch(v.trim())) {
+                  return 'Enter a valid email';
+                }
                 return null;
               },
             ),
             const SizedBox(height: 16),
 
-            // ── Password field ───────────────────────────────────────────
+            // ── Password ─────────────────────────────────────────────────
             _buildTextField(
               controller: _passwordController,
               hint: 'Password',
               prefixIcon: Icons.lock_outline_rounded,
               obscureText: _obscurePassword,
+              hasError: _registerError != null,
+              onChanged: (_) {
+                if (_registerError != null) {
+                  setState(() => _registerError = null);
+                }
+              },
               suffixIcon: IconButton(
                 icon: Icon(
                   _obscurePassword
@@ -213,18 +266,26 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               ),
               validator: (v) {
                 if (v == null || v.isEmpty) return 'Password is required';
-                if (v.length < 6) return 'Password must be at least 6 characters';
+                if (v.length < 6) {
+                  return 'Password must be at least 6 characters';
+                }
                 return null;
               },
             ),
             const SizedBox(height: 16),
 
-            // ── Confirm password field ───────────────────────────────────
+            // ── Confirm password ─────────────────────────────────────────
             _buildTextField(
               controller: _confirmPasswordController,
               hint: 'Confirm Password',
               prefixIcon: Icons.lock_outline_rounded,
               obscureText: _obscureConfirmPassword,
+              hasError: _registerError != null,
+              onChanged: (_) {
+                if (_registerError != null) {
+                  setState(() => _registerError = null);
+                }
+              },
               suffixIcon: IconButton(
                 icon: Icon(
                   _obscureConfirmPassword
@@ -237,14 +298,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     () => _obscureConfirmPassword = !_obscureConfirmPassword),
               ),
               validator: (v) {
-                if (v == null || v.isEmpty) return 'Please confirm your password';
-                if (v != _passwordController.text) return 'Passwords do not match';
+                if (v == null || v.isEmpty) {
+                  return 'Please confirm your password';
+                }
+                if (v != _passwordController.text) {
+                  return 'Passwords do not match';
+                }
                 return null;
               },
             ),
             const SizedBox(height: 16),
 
-            // ── Terms & Conditions checkbox ──────────────────────────────
+            // ── Terms & Conditions ───────────────────────────────────────
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -253,27 +318,35 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   height: 20,
                   child: Checkbox(
                     value: _agreeToTerms,
-                    onChanged: (v) =>
-                        setState(() => _agreeToTerms = v ?? false),
+                    onChanged: (v) {
+                      setState(() {
+                        _agreeToTerms = v ?? false;
+                        if (_agreeToTerms) _registerError = null;
+                      });
+                    },
                     activeColor: _accentColor,
-                    side: const BorderSide(color: _accentColor, width: 1.5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
+                    side: BorderSide(
+                      color: _registerError != null && !_agreeToTerms
+                          ? Colors.red.shade400
+                          : _accentColor,
+                      width: 1.5,
                     ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: GestureDetector(
-                    onTap: () =>
-                        setState(() => _agreeToTerms = !_agreeToTerms),
+                    onTap: () => setState(() {
+                      _agreeToTerms = !_agreeToTerms;
+                      if (_agreeToTerms) _registerError = null;
+                    }),
                     child: RichText(
                       text: const TextSpan(
                         text: 'I agree to the ',
                         style: TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF4A7A8A),
-                        ),
+                            fontSize: 12, color: Color(0xFF4A7A8A)),
                         children: [
                           TextSpan(
                             text: 'Terms & Conditions',
@@ -291,7 +364,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             ),
             const SizedBox(height: 24),
 
-            // ── Register button ──────────────────────────────────────────
+            // ── Sign Up button ───────────────────────────────────────────
             SizedBox(
               height: 52,
               child: ElevatedButton(
@@ -302,8 +375,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   disabledBackgroundColor:
                       _primaryColor.withValues(alpha: 0.6),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
+                      borderRadius: BorderRadius.circular(30)),
                   elevation: 0,
                 ),
                 child: _isLoading
@@ -311,9 +383,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         width: 22,
                         height: 22,
                         child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2.5,
-                        ),
+                            color: Colors.white, strokeWidth: 2.5),
                       )
                     : const Text(
                         'SIGN UP',
@@ -327,13 +397,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             ),
             const SizedBox(height: 18),
 
-            // ── Already have account link ────────────────────────────────
+            // ── Already have account ─────────────────────────────────────
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
                   'Already have an account? ',
-                  style: TextStyle(fontSize: 13, color: Color(0xFF4A7A8A)),
+                  style:
+                      TextStyle(fontSize: 13, color: Color(0xFF4A7A8A)),
                 ),
                 GestureDetector(
                   onTap: _handleLogin,
@@ -353,7 +424,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             // ── OR divider ───────────────────────────────────────────────
             Row(
               children: [
-                Expanded(child: Divider(color: _fieldBorder, thickness: 1)),
+                Expanded(
+                    child: Divider(color: _fieldBorder, thickness: 1)),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 12),
                   child: Text(
@@ -366,12 +438,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ),
                   ),
                 ),
-                Expanded(child: Divider(color: _fieldBorder, thickness: 1)),
+                Expanded(
+                    child: Divider(color: _fieldBorder, thickness: 1)),
               ],
             ),
             const SizedBox(height: 20),
 
-            // ── Google Sign-Up button ────────────────────────────────────
+            // ── Google Sign-Up ───────────────────────────────────────────
             _buildGoogleButton(),
           ],
         ),
@@ -386,14 +459,24 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     required IconData prefixIcon,
     TextInputType keyboardType = TextInputType.text,
     bool obscureText = false,
+    bool hasError = false,
     Widget? suffixIcon,
+    ValueChanged<String>? onChanged,
     String? Function(String?)? validator,
   }) {
+    final errorBorderSide =
+        BorderSide(color: Colors.red.shade400, width: 1.5);
+    final normalBorderSide =
+        const BorderSide(color: _fieldBorder, width: 1.2);
+    final focusBorderSide =
+        const BorderSide(color: _primaryColor, width: 1.8);
+
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
       obscureText: obscureText,
       validator: validator,
+      onChanged: onChanged,
       style: const TextStyle(fontSize: 14, color: Color(0xFF1A3A4A)),
       decoration: InputDecoration(
         hintText: hint,
@@ -406,15 +489,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
-          borderSide: const BorderSide(color: _fieldBorder, width: 1.2),
+          borderSide: hasError ? errorBorderSide : normalBorderSide,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
-          borderSide: const BorderSide(color: _primaryColor, width: 1.8),
+          borderSide: hasError ? errorBorderSide : focusBorderSide,
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
-          borderSide: const BorderSide(color: Colors.redAccent, width: 1.2),
+          borderSide:
+              const BorderSide(color: Colors.redAccent, width: 1.2),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
@@ -436,8 +520,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           foregroundColor: const Color(0xFF1A3A4A),
           side: const BorderSide(color: _fieldBorder, width: 1.2),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
+              borderRadius: BorderRadius.circular(30)),
           elevation: 0,
         ),
         child: Row(

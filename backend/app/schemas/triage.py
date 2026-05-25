@@ -1,19 +1,16 @@
-from pydantic import BaseModel, Field
-from typing import Optional, Dict, List
-from enum import Enum
+from pydantic import BaseModel
+from typing import Optional, List
 
-class UrgencyEnum(str, Enum):
-    emergency = "Emergency"
-    urgent = "Urgent"
-    non_urgent = "Non-Urgent"
+class TriageRequest(BaseModel):
+    symptoms:   List[str]
+    free_text:  Optional[str] = ""
+    age:        int
+    sex:        str
+    conditions: Optional[List[str]] = []
 
-class TriageInput(BaseModel):
-    symptoms_text: str = Field(..., min_length=3)
-    checklist: Optional[Dict[str, bool]] = None
-
-class TriageOutput(BaseModel):
-    urgency: UrgencyEnum
-    reasons: List[str]
-    recommended_actions: List[str]
-    probabilities: dict
-    assessment_id: int
+class TriageResponse(BaseModel):
+    priority:   str
+    tagline:    Optional[str] = None
+    reason:     Optional[str] = None
+    next_steps: Optional[List[str]] = []
+    assessment_id: int                   # returned after saving to DB

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TriageRequest {
 
-@JsonKey(name: 'symptoms_text') String get symptomsText; Map<String, bool>? get checklist;
+ List<String> get symptoms;@JsonKey(name: 'free_text') String get freeText; int get age; String get sex; List<String> get conditions;
 /// Create a copy of TriageRequest
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $TriageRequestCopyWith<TriageRequest> get copyWith => _$TriageRequestCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TriageRequest&&(identical(other.symptomsText, symptomsText) || other.symptomsText == symptomsText)&&const DeepCollectionEquality().equals(other.checklist, checklist));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TriageRequest&&const DeepCollectionEquality().equals(other.symptoms, symptoms)&&(identical(other.freeText, freeText) || other.freeText == freeText)&&(identical(other.age, age) || other.age == age)&&(identical(other.sex, sex) || other.sex == sex)&&const DeepCollectionEquality().equals(other.conditions, conditions));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,symptomsText,const DeepCollectionEquality().hash(checklist));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(symptoms),freeText,age,sex,const DeepCollectionEquality().hash(conditions));
 
 @override
 String toString() {
-  return 'TriageRequest(symptomsText: $symptomsText, checklist: $checklist)';
+  return 'TriageRequest(symptoms: $symptoms, freeText: $freeText, age: $age, sex: $sex, conditions: $conditions)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $TriageRequestCopyWith<$Res>  {
   factory $TriageRequestCopyWith(TriageRequest value, $Res Function(TriageRequest) _then) = _$TriageRequestCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'symptoms_text') String symptomsText, Map<String, bool>? checklist
+ List<String> symptoms,@JsonKey(name: 'free_text') String freeText, int age, String sex, List<String> conditions
 });
 
 
@@ -65,11 +65,14 @@ class _$TriageRequestCopyWithImpl<$Res>
 
 /// Create a copy of TriageRequest
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? symptomsText = null,Object? checklist = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? symptoms = null,Object? freeText = null,Object? age = null,Object? sex = null,Object? conditions = null,}) {
   return _then(_self.copyWith(
-symptomsText: null == symptomsText ? _self.symptomsText : symptomsText // ignore: cast_nullable_to_non_nullable
-as String,checklist: freezed == checklist ? _self.checklist : checklist // ignore: cast_nullable_to_non_nullable
-as Map<String, bool>?,
+symptoms: null == symptoms ? _self.symptoms : symptoms // ignore: cast_nullable_to_non_nullable
+as List<String>,freeText: null == freeText ? _self.freeText : freeText // ignore: cast_nullable_to_non_nullable
+as String,age: null == age ? _self.age : age // ignore: cast_nullable_to_non_nullable
+as int,sex: null == sex ? _self.sex : sex // ignore: cast_nullable_to_non_nullable
+as String,conditions: null == conditions ? _self.conditions : conditions // ignore: cast_nullable_to_non_nullable
+as List<String>,
   ));
 }
 
@@ -154,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'symptoms_text')  String symptomsText,  Map<String, bool>? checklist)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<String> symptoms, @JsonKey(name: 'free_text')  String freeText,  int age,  String sex,  List<String> conditions)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TriageRequest() when $default != null:
-return $default(_that.symptomsText,_that.checklist);case _:
+return $default(_that.symptoms,_that.freeText,_that.age,_that.sex,_that.conditions);case _:
   return orElse();
 
 }
@@ -175,10 +178,10 @@ return $default(_that.symptomsText,_that.checklist);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'symptoms_text')  String symptomsText,  Map<String, bool>? checklist)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<String> symptoms, @JsonKey(name: 'free_text')  String freeText,  int age,  String sex,  List<String> conditions)  $default,) {final _that = this;
 switch (_that) {
 case _TriageRequest():
-return $default(_that.symptomsText,_that.checklist);case _:
+return $default(_that.symptoms,_that.freeText,_that.age,_that.sex,_that.conditions);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,10 +198,10 @@ return $default(_that.symptomsText,_that.checklist);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'symptoms_text')  String symptomsText,  Map<String, bool>? checklist)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<String> symptoms, @JsonKey(name: 'free_text')  String freeText,  int age,  String sex,  List<String> conditions)?  $default,) {final _that = this;
 switch (_that) {
 case _TriageRequest() when $default != null:
-return $default(_that.symptomsText,_that.checklist);case _:
+return $default(_that.symptoms,_that.freeText,_that.age,_that.sex,_that.conditions);case _:
   return null;
 
 }
@@ -210,17 +213,24 @@ return $default(_that.symptomsText,_that.checklist);case _:
 @JsonSerializable()
 
 class _TriageRequest implements TriageRequest {
-  const _TriageRequest({@JsonKey(name: 'symptoms_text') required this.symptomsText, final  Map<String, bool>? checklist}): _checklist = checklist;
+  const _TriageRequest({required final  List<String> symptoms, @JsonKey(name: 'free_text') this.freeText = '', required this.age, required this.sex, final  List<String> conditions = const []}): _symptoms = symptoms,_conditions = conditions;
   factory _TriageRequest.fromJson(Map<String, dynamic> json) => _$TriageRequestFromJson(json);
 
-@override@JsonKey(name: 'symptoms_text') final  String symptomsText;
- final  Map<String, bool>? _checklist;
-@override Map<String, bool>? get checklist {
-  final value = _checklist;
-  if (value == null) return null;
-  if (_checklist is EqualUnmodifiableMapView) return _checklist;
+ final  List<String> _symptoms;
+@override List<String> get symptoms {
+  if (_symptoms is EqualUnmodifiableListView) return _symptoms;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableMapView(value);
+  return EqualUnmodifiableListView(_symptoms);
+}
+
+@override@JsonKey(name: 'free_text') final  String freeText;
+@override final  int age;
+@override final  String sex;
+ final  List<String> _conditions;
+@override@JsonKey() List<String> get conditions {
+  if (_conditions is EqualUnmodifiableListView) return _conditions;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_conditions);
 }
 
 
@@ -237,16 +247,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TriageRequest&&(identical(other.symptomsText, symptomsText) || other.symptomsText == symptomsText)&&const DeepCollectionEquality().equals(other._checklist, _checklist));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TriageRequest&&const DeepCollectionEquality().equals(other._symptoms, _symptoms)&&(identical(other.freeText, freeText) || other.freeText == freeText)&&(identical(other.age, age) || other.age == age)&&(identical(other.sex, sex) || other.sex == sex)&&const DeepCollectionEquality().equals(other._conditions, _conditions));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,symptomsText,const DeepCollectionEquality().hash(_checklist));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_symptoms),freeText,age,sex,const DeepCollectionEquality().hash(_conditions));
 
 @override
 String toString() {
-  return 'TriageRequest(symptomsText: $symptomsText, checklist: $checklist)';
+  return 'TriageRequest(symptoms: $symptoms, freeText: $freeText, age: $age, sex: $sex, conditions: $conditions)';
 }
 
 
@@ -257,7 +267,7 @@ abstract mixin class _$TriageRequestCopyWith<$Res> implements $TriageRequestCopy
   factory _$TriageRequestCopyWith(_TriageRequest value, $Res Function(_TriageRequest) _then) = __$TriageRequestCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'symptoms_text') String symptomsText, Map<String, bool>? checklist
+ List<String> symptoms,@JsonKey(name: 'free_text') String freeText, int age, String sex, List<String> conditions
 });
 
 
@@ -274,11 +284,14 @@ class __$TriageRequestCopyWithImpl<$Res>
 
 /// Create a copy of TriageRequest
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? symptomsText = null,Object? checklist = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? symptoms = null,Object? freeText = null,Object? age = null,Object? sex = null,Object? conditions = null,}) {
   return _then(_TriageRequest(
-symptomsText: null == symptomsText ? _self.symptomsText : symptomsText // ignore: cast_nullable_to_non_nullable
-as String,checklist: freezed == checklist ? _self._checklist : checklist // ignore: cast_nullable_to_non_nullable
-as Map<String, bool>?,
+symptoms: null == symptoms ? _self._symptoms : symptoms // ignore: cast_nullable_to_non_nullable
+as List<String>,freeText: null == freeText ? _self.freeText : freeText // ignore: cast_nullable_to_non_nullable
+as String,age: null == age ? _self.age : age // ignore: cast_nullable_to_non_nullable
+as int,sex: null == sex ? _self.sex : sex // ignore: cast_nullable_to_non_nullable
+as String,conditions: null == conditions ? _self._conditions : conditions // ignore: cast_nullable_to_non_nullable
+as List<String>,
   ));
 }
 
@@ -289,7 +302,7 @@ as Map<String, bool>?,
 /// @nodoc
 mixin _$TriageResult {
 
- String get urgency; List<String> get reasons;@JsonKey(name: 'recommended_actions') List<String> get recommendedActions; Map<String, dynamic> get probabilities;@JsonKey(name: 'assessment_id') int get assessmentId;
+ String get priority; String? get tagline; String? get reason;@JsonKey(name: 'next_steps') List<String> get nextSteps;@JsonKey(name: 'assessment_id') int get assessmentId;
 /// Create a copy of TriageResult
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -302,16 +315,16 @@ $TriageResultCopyWith<TriageResult> get copyWith => _$TriageResultCopyWithImpl<T
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TriageResult&&(identical(other.urgency, urgency) || other.urgency == urgency)&&const DeepCollectionEquality().equals(other.reasons, reasons)&&const DeepCollectionEquality().equals(other.recommendedActions, recommendedActions)&&const DeepCollectionEquality().equals(other.probabilities, probabilities)&&(identical(other.assessmentId, assessmentId) || other.assessmentId == assessmentId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TriageResult&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.tagline, tagline) || other.tagline == tagline)&&(identical(other.reason, reason) || other.reason == reason)&&const DeepCollectionEquality().equals(other.nextSteps, nextSteps)&&(identical(other.assessmentId, assessmentId) || other.assessmentId == assessmentId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,urgency,const DeepCollectionEquality().hash(reasons),const DeepCollectionEquality().hash(recommendedActions),const DeepCollectionEquality().hash(probabilities),assessmentId);
+int get hashCode => Object.hash(runtimeType,priority,tagline,reason,const DeepCollectionEquality().hash(nextSteps),assessmentId);
 
 @override
 String toString() {
-  return 'TriageResult(urgency: $urgency, reasons: $reasons, recommendedActions: $recommendedActions, probabilities: $probabilities, assessmentId: $assessmentId)';
+  return 'TriageResult(priority: $priority, tagline: $tagline, reason: $reason, nextSteps: $nextSteps, assessmentId: $assessmentId)';
 }
 
 
@@ -322,7 +335,7 @@ abstract mixin class $TriageResultCopyWith<$Res>  {
   factory $TriageResultCopyWith(TriageResult value, $Res Function(TriageResult) _then) = _$TriageResultCopyWithImpl;
 @useResult
 $Res call({
- String urgency, List<String> reasons,@JsonKey(name: 'recommended_actions') List<String> recommendedActions, Map<String, dynamic> probabilities,@JsonKey(name: 'assessment_id') int assessmentId
+ String priority, String? tagline, String? reason,@JsonKey(name: 'next_steps') List<String> nextSteps,@JsonKey(name: 'assessment_id') int assessmentId
 });
 
 
@@ -339,13 +352,13 @@ class _$TriageResultCopyWithImpl<$Res>
 
 /// Create a copy of TriageResult
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? urgency = null,Object? reasons = null,Object? recommendedActions = null,Object? probabilities = null,Object? assessmentId = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? priority = null,Object? tagline = freezed,Object? reason = freezed,Object? nextSteps = null,Object? assessmentId = null,}) {
   return _then(_self.copyWith(
-urgency: null == urgency ? _self.urgency : urgency // ignore: cast_nullable_to_non_nullable
-as String,reasons: null == reasons ? _self.reasons : reasons // ignore: cast_nullable_to_non_nullable
-as List<String>,recommendedActions: null == recommendedActions ? _self.recommendedActions : recommendedActions // ignore: cast_nullable_to_non_nullable
-as List<String>,probabilities: null == probabilities ? _self.probabilities : probabilities // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>,assessmentId: null == assessmentId ? _self.assessmentId : assessmentId // ignore: cast_nullable_to_non_nullable
+priority: null == priority ? _self.priority : priority // ignore: cast_nullable_to_non_nullable
+as String,tagline: freezed == tagline ? _self.tagline : tagline // ignore: cast_nullable_to_non_nullable
+as String?,reason: freezed == reason ? _self.reason : reason // ignore: cast_nullable_to_non_nullable
+as String?,nextSteps: null == nextSteps ? _self.nextSteps : nextSteps // ignore: cast_nullable_to_non_nullable
+as List<String>,assessmentId: null == assessmentId ? _self.assessmentId : assessmentId // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }
@@ -431,10 +444,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String urgency,  List<String> reasons, @JsonKey(name: 'recommended_actions')  List<String> recommendedActions,  Map<String, dynamic> probabilities, @JsonKey(name: 'assessment_id')  int assessmentId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String priority,  String? tagline,  String? reason, @JsonKey(name: 'next_steps')  List<String> nextSteps, @JsonKey(name: 'assessment_id')  int assessmentId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TriageResult() when $default != null:
-return $default(_that.urgency,_that.reasons,_that.recommendedActions,_that.probabilities,_that.assessmentId);case _:
+return $default(_that.priority,_that.tagline,_that.reason,_that.nextSteps,_that.assessmentId);case _:
   return orElse();
 
 }
@@ -452,10 +465,10 @@ return $default(_that.urgency,_that.reasons,_that.recommendedActions,_that.proba
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String urgency,  List<String> reasons, @JsonKey(name: 'recommended_actions')  List<String> recommendedActions,  Map<String, dynamic> probabilities, @JsonKey(name: 'assessment_id')  int assessmentId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String priority,  String? tagline,  String? reason, @JsonKey(name: 'next_steps')  List<String> nextSteps, @JsonKey(name: 'assessment_id')  int assessmentId)  $default,) {final _that = this;
 switch (_that) {
 case _TriageResult():
-return $default(_that.urgency,_that.reasons,_that.recommendedActions,_that.probabilities,_that.assessmentId);case _:
+return $default(_that.priority,_that.tagline,_that.reason,_that.nextSteps,_that.assessmentId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -472,10 +485,10 @@ return $default(_that.urgency,_that.reasons,_that.recommendedActions,_that.proba
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String urgency,  List<String> reasons, @JsonKey(name: 'recommended_actions')  List<String> recommendedActions,  Map<String, dynamic> probabilities, @JsonKey(name: 'assessment_id')  int assessmentId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String priority,  String? tagline,  String? reason, @JsonKey(name: 'next_steps')  List<String> nextSteps, @JsonKey(name: 'assessment_id')  int assessmentId)?  $default,) {final _that = this;
 switch (_that) {
 case _TriageResult() when $default != null:
-return $default(_that.urgency,_that.reasons,_that.recommendedActions,_that.probabilities,_that.assessmentId);case _:
+return $default(_that.priority,_that.tagline,_that.reason,_that.nextSteps,_that.assessmentId);case _:
   return null;
 
 }
@@ -487,29 +500,17 @@ return $default(_that.urgency,_that.reasons,_that.recommendedActions,_that.proba
 @JsonSerializable()
 
 class _TriageResult implements TriageResult {
-  const _TriageResult({required this.urgency, required final  List<String> reasons, @JsonKey(name: 'recommended_actions') required final  List<String> recommendedActions, required final  Map<String, dynamic> probabilities, @JsonKey(name: 'assessment_id') required this.assessmentId}): _reasons = reasons,_recommendedActions = recommendedActions,_probabilities = probabilities;
+  const _TriageResult({required this.priority, this.tagline, this.reason, @JsonKey(name: 'next_steps') final  List<String> nextSteps = const [], @JsonKey(name: 'assessment_id') required this.assessmentId}): _nextSteps = nextSteps;
   factory _TriageResult.fromJson(Map<String, dynamic> json) => _$TriageResultFromJson(json);
 
-@override final  String urgency;
- final  List<String> _reasons;
-@override List<String> get reasons {
-  if (_reasons is EqualUnmodifiableListView) return _reasons;
+@override final  String priority;
+@override final  String? tagline;
+@override final  String? reason;
+ final  List<String> _nextSteps;
+@override@JsonKey(name: 'next_steps') List<String> get nextSteps {
+  if (_nextSteps is EqualUnmodifiableListView) return _nextSteps;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_reasons);
-}
-
- final  List<String> _recommendedActions;
-@override@JsonKey(name: 'recommended_actions') List<String> get recommendedActions {
-  if (_recommendedActions is EqualUnmodifiableListView) return _recommendedActions;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_recommendedActions);
-}
-
- final  Map<String, dynamic> _probabilities;
-@override Map<String, dynamic> get probabilities {
-  if (_probabilities is EqualUnmodifiableMapView) return _probabilities;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableMapView(_probabilities);
+  return EqualUnmodifiableListView(_nextSteps);
 }
 
 @override@JsonKey(name: 'assessment_id') final  int assessmentId;
@@ -527,16 +528,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TriageResult&&(identical(other.urgency, urgency) || other.urgency == urgency)&&const DeepCollectionEquality().equals(other._reasons, _reasons)&&const DeepCollectionEquality().equals(other._recommendedActions, _recommendedActions)&&const DeepCollectionEquality().equals(other._probabilities, _probabilities)&&(identical(other.assessmentId, assessmentId) || other.assessmentId == assessmentId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TriageResult&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.tagline, tagline) || other.tagline == tagline)&&(identical(other.reason, reason) || other.reason == reason)&&const DeepCollectionEquality().equals(other._nextSteps, _nextSteps)&&(identical(other.assessmentId, assessmentId) || other.assessmentId == assessmentId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,urgency,const DeepCollectionEquality().hash(_reasons),const DeepCollectionEquality().hash(_recommendedActions),const DeepCollectionEquality().hash(_probabilities),assessmentId);
+int get hashCode => Object.hash(runtimeType,priority,tagline,reason,const DeepCollectionEquality().hash(_nextSteps),assessmentId);
 
 @override
 String toString() {
-  return 'TriageResult(urgency: $urgency, reasons: $reasons, recommendedActions: $recommendedActions, probabilities: $probabilities, assessmentId: $assessmentId)';
+  return 'TriageResult(priority: $priority, tagline: $tagline, reason: $reason, nextSteps: $nextSteps, assessmentId: $assessmentId)';
 }
 
 
@@ -547,7 +548,7 @@ abstract mixin class _$TriageResultCopyWith<$Res> implements $TriageResultCopyWi
   factory _$TriageResultCopyWith(_TriageResult value, $Res Function(_TriageResult) _then) = __$TriageResultCopyWithImpl;
 @override @useResult
 $Res call({
- String urgency, List<String> reasons,@JsonKey(name: 'recommended_actions') List<String> recommendedActions, Map<String, dynamic> probabilities,@JsonKey(name: 'assessment_id') int assessmentId
+ String priority, String? tagline, String? reason,@JsonKey(name: 'next_steps') List<String> nextSteps,@JsonKey(name: 'assessment_id') int assessmentId
 });
 
 
@@ -564,13 +565,13 @@ class __$TriageResultCopyWithImpl<$Res>
 
 /// Create a copy of TriageResult
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? urgency = null,Object? reasons = null,Object? recommendedActions = null,Object? probabilities = null,Object? assessmentId = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? priority = null,Object? tagline = freezed,Object? reason = freezed,Object? nextSteps = null,Object? assessmentId = null,}) {
   return _then(_TriageResult(
-urgency: null == urgency ? _self.urgency : urgency // ignore: cast_nullable_to_non_nullable
-as String,reasons: null == reasons ? _self._reasons : reasons // ignore: cast_nullable_to_non_nullable
-as List<String>,recommendedActions: null == recommendedActions ? _self._recommendedActions : recommendedActions // ignore: cast_nullable_to_non_nullable
-as List<String>,probabilities: null == probabilities ? _self._probabilities : probabilities // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>,assessmentId: null == assessmentId ? _self.assessmentId : assessmentId // ignore: cast_nullable_to_non_nullable
+priority: null == priority ? _self.priority : priority // ignore: cast_nullable_to_non_nullable
+as String,tagline: freezed == tagline ? _self.tagline : tagline // ignore: cast_nullable_to_non_nullable
+as String?,reason: freezed == reason ? _self.reason : reason // ignore: cast_nullable_to_non_nullable
+as String?,nextSteps: null == nextSteps ? _self._nextSteps : nextSteps // ignore: cast_nullable_to_non_nullable
+as List<String>,assessmentId: null == assessmentId ? _self.assessmentId : assessmentId // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }

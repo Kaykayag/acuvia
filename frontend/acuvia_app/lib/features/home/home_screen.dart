@@ -216,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
           height: 52,
           child: ElevatedButton(
             onPressed: () {
-              // TODO: context.go('/assistant');
+              context.go('/chatbot');
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: _primaryColor,
@@ -275,8 +275,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   switch (index) {
                     case 0: context.go('/home'); break;
                     case 1: context.go('/history'); break;
-                    case 2: context.go('/learn'); break; // TODO: implement learn route
-                    case 3: context.go('/profile'); break; // TODO: implement profile route
+                    case 2: context.go('/learn'); break; 
+                    case 3: context.go('/profile'); break; 
                   }
                 },
                 behavior: HitTestBehavior.opaque,

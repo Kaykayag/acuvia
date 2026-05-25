@@ -1,7 +1,5 @@
-version: '3.8'
 
 services:
-  # Backend service running FastAPI
   backend:
     build:
       context: ./backend
@@ -11,23 +9,28 @@ services:
     env_file:
       - ./backend/.env
     environment:
-      # When running in docker-compose the DB host should point to the postgres service
-      - POSTGRES_HOST=db
+      - POSTGRES_HOST=db        # points to the db service inside Docker
     depends_on:
-      - db
+      db:
+        condition: service_healthy  # wait until Postgres is actually ready
+    restart: on-failure
 
-  # Postgres database for local development
   db:
     image: postgres:15
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "5432:5432"             # exposed so you can connect via pgAdmin/DBeaver
     environment:
       - POSTGRES_USER=acuvia
       - POSTGRES_PASSWORD=acuvia
       - POSTGRES_DB=acuvia
     volumes:
       - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U acuvia -d acuvia"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   db_data:

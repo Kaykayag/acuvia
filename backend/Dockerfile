@@ -2,19 +2,27 @@ FROM python:3.13-slim
 
 WORKDIR /app
 
-# Install system deps required for some Python packages (e.g. psycopg2)
 RUN apt-get update \
     && apt-get install -y --no-install-recommends gcc libpq-dev build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy only pyproject first to leverage Docker cache if dependencies don't change
 COPY pyproject.toml poetry.lock* /app/
 
-# Install pip and essential Python packages
 RUN python -m pip install --upgrade pip setuptools
-RUN pip install --no-cache-dir fastapi uvicorn[standard] sqlalchemy psycopg2-binary python-jose[cryptography] passlib[bcrypt] pydantic pydantic-settings alembic
+RUN pip install --no-cache-dir \
+    fastapi \
+    uvicorn[standard] \
+    sqlalchemy \
+    psycopg2-binary \
+    python-jose[cryptography] \
+    passlib[bcrypt] \
+    bcrypt==4.0.1 \
+    pydantic \
+    pydantic-settings \
+    pydantic[email] \
+    alembic \
+    httpx              
 
-# Copy the application code
 COPY . /app
 
 EXPOSE 8000

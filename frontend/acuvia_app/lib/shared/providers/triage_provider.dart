@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import '../../../data/models/triage.dart';
 import '../../../data/repositories/triage_repository.dart';
 
@@ -13,8 +12,20 @@ class TriageController {
   TriageController(this._ref);
   final Ref _ref;
 
-  Future<TriageResult> submit(String text, Map<String, bool> checklist) async {
-    final req = TriageRequest(symptomsText: text, checklist: checklist);
+  Future<TriageResult> submit({
+    required List<String> symptoms,
+    required int age,
+    required String sex,
+    String freeText = '',
+    List<String> conditions = const [],
+  }) async {
+    final req = TriageRequest(
+      symptoms:   symptoms,
+      freeText:   freeText,
+      age:        age,
+      sex:        sex,
+      conditions: conditions,
+    );
     final result = await _ref.read(triageRepositoryProvider).submit(req);
     _ref.read(triageResultProvider.notifier).state = result;
     return result;

@@ -1,3 +1,4 @@
+// lib/data/repositories/auth_repository.dart
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/http_client.dart';
@@ -12,14 +13,16 @@ class AuthRepository {
   AuthRepository(this._dio);
   final Dio _dio;
 
+  /// Login — returns the JWT access token
   Future<String> login(String email, String password) async {
     final res = await _dio.post(
       '/auth/login',
       data: {'email': email, 'password': password},
     );
-    return res.data['token'] as String;
+    return res.data['access_token'] as String;
   }
 
+  /// Register — creates user in DB and returns JWT access token
   Future<String> register(
     String email,
     String password, {
@@ -27,16 +30,18 @@ class AuthRepository {
   }) async {
     final res = await _dio.post(
       '/auth/register',
-      data: {'email': email, 'password': password, 'fullName': fullName},
+      data: {
+        'email':     email,
+        'password':  password,
+        'full_name': fullName,   // matches RegisterInput field in backend
+      },
     );
-    return res.data['token'] as String;
+    return res.data['access_token'] as String;
   }
 
-  Future<User> getCurrentUser(String token) async {
-    final res = await _dio.get(
-      '/auth/me',
-      options: Options(headers: {'Authorization': 'Bearer $token'}),
-    );
+  /// Fetch current authenticated user profile
+  Future<User> getCurrentUser() async {
+    final res = await _dio.get('/auth/me');
     return User.fromJson(res.data as Map<String, dynamic>);
   }
 }

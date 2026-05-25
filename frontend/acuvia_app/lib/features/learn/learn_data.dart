@@ -1334,5 +1334,5 @@ class LearnData {
     ),
   ];
   
-  static get s => null;
+  static Null get s => null;
 }

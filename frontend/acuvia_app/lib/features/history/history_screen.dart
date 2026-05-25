@@ -247,7 +247,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(14, 10, 14, 24),
       itemCount: _sampleAssessments.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final a = _sampleAssessments[index];
         final isExpanded = _expandedId == a.id;
@@ -445,7 +445,7 @@ class _DetailSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Divider(color: s.accentColor.withOpacity(0.3), height: 1),
+        Divider(color: s.accentColor.withValues(alpha: 0.3), height: 1),
         Padding(
           padding: const EdgeInsets.fromLTRB(14, 14, 14, 6),
           child: Column(
@@ -701,9 +701,9 @@ class _SymptomRow extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
-          color: accentColor.withOpacity(0.05),
+          color: accentColor.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: accentColor.withOpacity(0.15)),
+          border: Border.all(color: accentColor.withValues(alpha: 0.15)),
         ),
         child: Row(
           children: [

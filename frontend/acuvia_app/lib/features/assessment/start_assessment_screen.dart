@@ -10,17 +10,18 @@ class StartAssessmentScreen extends StatefulWidget {
 
 class _StartAssessmentScreenState extends State<StartAssessmentScreen> {
   // ── Colors ─────────────────────────────────────────────────────────────
-  static const Color _bgColor        = Colors.white;
-  static const Color _primaryColor   = Color(0xFF1A7A9B);
-  static const Color _textDark       = Color(0xFF1A1A2E);
-  static const Color _textSub        = Color(0xFF7A8A92);
-  static const Color _checkboxBg     = Color(0xFFDDDDDD);
-  static const Color _progressBg     = Color(0xFFDDDDDD);
-  static const Color _rowDivider     = Color(0xFFF0F0F0);
+  static const Color _bgColor      = Colors.white;
+  static const Color _primaryColor = Color(0xFF1A7A9B);
+  static const Color _textDark     = Color(0xFF1A1A2E);
+  static const Color _textSub      = Color(0xFF7A8A92);
+  static const Color _checkboxBg   = Color(0xFFDDDDDD);
+  static const Color _progressBg   = Color(0xFFDDDDDD);
+  static const Color _rowDivider   = Color(0xFFF0F0F0);
 
   final TextEditingController _othersController = TextEditingController();
 
-  bool get _othersSelected => _symptoms.isNotEmpty && _symptoms.last.selected;
+  bool get _othersSelected =>
+      _symptoms.isNotEmpty && _symptoms.last.selected;
 
   final List<_Symptom> _symptoms = [
     _Symptom(label: 'Fever',               asset: 'assets/temperature 1.png'),
@@ -38,18 +39,40 @@ class _StartAssessmentScreenState extends State<StartAssessmentScreen> {
     super.dispose();
   }
 
+  // ── Submit ────────────────────────────────────────────────────────────────
   void _handleSubmit() {
-    final selected = _symptoms.where((s) => s.selected).toList();
+    // Collect checked symptoms, skip the 'Others' label itself
+    final selected = _symptoms
+        .where((s) => s.selected && s.label != 'Others')
+        .map((s) => s.label)
+        .toList();
+
+    // If 'Others' is checked and user typed something, include that text
+    final othersText = _othersController.text.trim();
+    if (_othersSelected && othersText.isNotEmpty) {
+      selected.add(othersText);
+    }
+
     if (selected.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select at least one symptom')),
+        const SnackBar(
+          content: Text('Please select at least one symptom'),
+        ),
       );
       return;
     }
-    // TODO: pass selected + _othersController.text to step 2
-    // context.go('/assessment/step2', extra: selected.map((s) => s.label).toList());
+
+    // Navigate to AI analysis screen — passes symptoms to MedGemma
+    context.go('/assessment/analysis', extra: {
+      'symptoms':   selected,
+      'age':        0,           // not collected on this screen
+      'sex':        'Unknown',   // not collected on this screen
+      'free_text':  othersText,
+      'conditions': <String>[],
+    });
   }
 
+  // ── Build ─────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,14 +102,16 @@ class _StartAssessmentScreenState extends State<StartAssessmentScreen> {
             // ── Symptom list ─────────────────────────────────────────────
             Expanded(
               child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                 itemCount: _symptoms.length,
-                separatorBuilder: (_, __) => const Divider(
+                separatorBuilder: (_, _) => const Divider(
                   color: _rowDivider,
                   height: 1,
                   thickness: 1,
                 ),
-                itemBuilder: (_, index) => _buildSymptomRow(_symptoms[index]),
+                itemBuilder: (_, index) =>
+                    _buildSymptomRow(_symptoms[index]),
               ),
             ),
 
@@ -115,7 +140,8 @@ class _StartAssessmentScreenState extends State<StartAssessmentScreen> {
         children: [
           GestureDetector(
             onTap: () => context.go('/home'),
-            child: const Icon(Icons.arrow_back, size: 24, color: _textDark),
+            child:
+                const Icon(Icons.arrow_back, size: 24, color: _textDark),
           ),
           const Expanded(
             child: Text(
@@ -155,7 +181,8 @@ class _StartAssessmentScreenState extends State<StartAssessmentScreen> {
               value: 0.5,
               minHeight: 6,
               backgroundColor: _progressBg,
-              valueColor: const AlwaysStoppedAnimation<Color>(_primaryColor),
+              valueColor:
+                  const AlwaysStoppedAnimation<Color>(_primaryColor),
             ),
           ),
         ],
@@ -213,7 +240,6 @@ class _StartAssessmentScreenState extends State<StartAssessmentScreen> {
   }
 
   // ── Describe your symptoms panel ──────────────────────────────────────────
-  // Plain white background, just a label + underline text field + send icon
   Widget _buildDescribePanel() {
     return Container(
       width: double.infinity,
@@ -222,7 +248,6 @@ class _StartAssessmentScreenState extends State<StartAssessmentScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Label + underline field stacked
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -248,12 +273,13 @@ class _StartAssessmentScreenState extends State<StartAssessmentScreen> {
                       fontSize: 13,
                       color: Color(0xFFAAAAAA),
                     ),
-                    // Underline only — matches the screenshot
                     enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFFCCCCCC), width: 1),
+                      borderSide:
+                          BorderSide(color: Color(0xFFCCCCCC), width: 1),
                     ),
                     focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: _primaryColor, width: 1.5),
+                      borderSide:
+                          BorderSide(color: _primaryColor, width: 1.5),
                     ),
                     isDense: true,
                     contentPadding: EdgeInsets.symmetric(vertical: 8),
@@ -267,7 +293,7 @@ class _StartAssessmentScreenState extends State<StartAssessmentScreen> {
           ),
           const SizedBox(width: 12),
 
-          // Send arrow icon
+          // Send icon — dismisses keyboard
           GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             child: const Icon(
@@ -332,6 +358,5 @@ class _Symptom {
   _Symptom({
     required this.label,
     required this.asset,
-    this.selected = false,
-  });
+  }) : selected = false;
 }

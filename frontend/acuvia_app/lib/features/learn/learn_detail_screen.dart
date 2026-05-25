@@ -53,7 +53,7 @@ class LearnDetailScreen extends StatelessWidget {
               end: Alignment.bottomRight,
               colors: [
                 accentColor,
-                accentColor.withOpacity(0.75),
+                accentColor.withValues(alpha: 0.75),
               ],
             ),
           ),
@@ -68,7 +68,7 @@ class LearnDetailScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.22),
+                      color: Colors.white.withValues(alpha: 0.22),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -88,7 +88,7 @@ class LearnDetailScreen extends StatelessWidget {
                         width: 38,
                         height: 38,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.22),
+                          color: Colors.white.withValues(alpha: 0.22),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(subItem.icon,
@@ -129,7 +129,7 @@ class LearnDetailScreen extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade100, width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -216,7 +216,7 @@ class _BulletItem extends StatelessWidget {
                 width: 6,
                 height: 6,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.7),
+                  color: color.withValues(alpha: 0.7),
                   shape: BoxShape.circle,
                 ),
               ),
