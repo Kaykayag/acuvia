@@ -54,32 +54,227 @@ Acuvia is a production-ready, clinical triage ecosystem built inside a monorepo 
 ## 📁 Repository Directory Structure
 
 ```text
-acuvia/
-├── README.md                     # Central documentation matrix
-├── .gitignore                    # Global file exclusion configurations
-├── docker-compose.yml            # System docker service engine definitions
-├── infra/                        # Infrastructure orchestration configurations
-│   └── nginx/                    # Reverse proxy routing rules
-│       └── nginx.conf
-├── backend/                      # Python FastAPI core app
-│   ├── pyproject.toml            # Poetry dependency structures
-│   ├── alembic.ini               # Relational data schema controller settings
+acuvia/                             # Accurate repository structure scanned from workspace
+├── .git/                           # Git metadata (not expanded)
+├── .gitignore                      # Global file exclusion configurations
+├── README.md                       # Central documentation matrix
+├── docker-compose.yml              # Docker Compose service definitions
+├── hs_err_pid13264.log             # JVM crash log
+├── replay_pid13264.log             # Replay log file
+├── backend/                        # Python FastAPI backend
+│   ├── .env                        # Backend environment variables
+│   ├── .venv/                      # Local Python virtual environment
+│   ├── alembic.ini                 # Alembic migration config
+│   ├── Dockerfile                  # Backend Docker image definition
+│   ├── poetry.lock                 # Poetry lockfile
+│   ├── pyproject.toml              # Poetry project metadata
 │   └── app/
-│       ├── core/                 # Encryption pipeline, runtime logs, system configs
-│       ├── db/                   # Table definitions, migration instances, data bridges
-│       ├── schemas/              # Input/Output data typing rules (Pydantic contracts)
-│       ├── ai/                   # NLP processors, training modules, model artifact assets
-│       ├── api/                  # Application runtime interface gateways (v1 paths)
-│       ├── services/             # Background logic engines (location maps, chat flows)
-│       └── main.py               # Engine entrypoint script
-└── frontend/                     # Multiplatform app codebases
-    └── acuvia_app/               # Flutter mobile root layout
-        ├── pubspec.yaml          # Flutter engine package tracking
-        └── lib/
-            ├── main.dart         # Entry execution target
-            ├── core/             # Shared styling architectures, routing parameters
-            ├── data/             # Models and data delivery repositories
-            └── features/         # Presentation views and Riverpod state providers
+│       ├── __init__.py
+│       ├── main.py
+│       ├── ai/
+│       │   ├── __init__.py
+│       │   ├── model.py
+│       │   ├── preprocessing.py
+│       │   ├── rules.py
+│       │   ├── train.py
+│       │   └── artifacts/
+│       │       ├── rf_model.joblib
+│       │       └── vectorizer.joblib
+│       ├── api/
+│       │   ├── __init__.py
+│       │   ├── deps.py
+│       │   └── v1/
+│       │       ├── __init__.py
+│       │       ├── auth.py
+│       │       ├── chat.py
+│       │       ├── history.py
+│       │       └── triage.py
+│       ├── core/
+│       │   ├── __init__.py
+│       │   ├── config.py
+│       │   └── security.py
+│       ├── db/
+│       │   ├── __init__.py
+│       │   ├── models.py
+│       │   ├── session.py
+│       │   └── migrations/
+│       │       ├── README
+│       │       ├── env.py
+│       │       ├── script.py.mako
+│       │       └── versions/      # Empty migrations version folder
+│       ├── schemas/
+│       │   ├── __init__.py
+│       │   ├── auth.py
+│       │   ├── chat.py
+│       │   └── triage.py
+│       └── services/
+│           ├── __init__.py
+│           ├── chatbot.py
+│           └── hospitals.py
+├── frontend/                       # Flutter app monorepo root
+│   └── acuvia_app/
+│       ├── .env
+│       ├── .gitignore
+│       ├── .metadata
+│       ├── README.md
+│       ├── analysis_options.yaml
+│       ├── pubspec.lock
+│       ├── pubspec.yaml
+│       ├── .flutter-plugins-dependencies
+│       ├── android/
+│       │   ├── .gitignore
+│       │   ├── acuvia_app_android.iml
+│       │   ├── build.gradle.kts
+│       │   ├── gradle.properties
+│       │   ├── gradlew
+│       │   ├── gradlew.bat
+│       │   ├── local.properties
+│       │   ├── settings.gradle.kts
+│       │   ├── app/
+│       │   │   ├── build.gradle.kts
+│       │   │   └── src/
+│       │   │       ├── debug/AndroidManifest.xml
+│       │   │       ├── main/
+│       │   │       │   ├── AndroidManifest.xml
+│       │   │       │   ├── java/io/flutter/plugins/GeneratedPluginRegistrant.java
+│       │   │       │   └── res/
+│       │   │       └── profile/AndroidManifest.xml
+│       │   └── gradle/
+│       │       └── wrapper/gradle-wrapper.properties
+│       ├── assets/
+│       ├── build/                    # Generated Flutter artifacts
+│       ├── ios/
+│       │   ├── .gitignore
+│       │   ├── Flutter/
+│       │   ├── Runner/
+│       │   ├── Runner.xcodeproj/
+│       │   ├── Runner.xcworkspace/
+│       │   └── RunnerTests/
+│       ├── lib/
+│       │   ├── app.dart
+│       │   ├── main.dart
+│       │   ├── auth/
+│       │   │   ├── forgot_password_screen.dart
+│       │   │   ├── login_screen.dart
+│       │   │   └── register_screen.dart
+│       │   ├── core/
+│       │   │   ├── constants.dart
+│       │   │   ├── error_mapper.dart
+│       │   │   ├── http_client.dart
+│       │   │   ├── router.dart
+│       │   │   └── theme.dart
+│       │   ├── data/
+│       │   │   ├── models/
+│       │   │   │   ├── chat.dart
+│       │   │   │   ├── chat.freezed.dart
+│       │   │   │   ├── chat.g.dart
+│       │   │   │   ├── hospital.dart
+│       │   │   │   ├── hospital.freezed.dart
+│       │   │   │   ├── hospital.g.dart
+│       │   │   │   ├── triage.dart
+│       │   │   │   ├── triage.freezed.dart
+│       │   │   │   ├── triage.g.dart
+│       │   │   │   ├── user.dart
+│       │   │   │   ├── user.freezed.dart
+│       │   │   │   └── user.g.dart
+│       │   │   └── repositories/
+│       │   │       ├── auth_repository.dart
+│       │   │       ├── chat_repository.dart
+│       │   │       ├── history_repository.dart
+│       │   │       ├── locator_repository.dart
+│       │   │       └── triage_repository.dart
+│       │   ├── features/
+│       │   │   ├── assessment/
+│       │   │   │   ├── ai_analysis_screen.dart
+│       │   │   │   ├── result_screen.dart
+│       │   │   │   ├── start_assessment_screen.dart
+│       │   │   │   └── symptom_input_screen.dart
+│       │   │   ├── chatbot/chatbot_screen.dart
+│       │   │   ├── history/history_screen.dart
+│       │   │   ├── home/home_screen.dart
+│       │   │   ├── learn/
+│       │   │   │   ├── learn_data.dart
+│       │   │   │   ├── learn_detail_screen.dart
+│       │   │   │   └── learn_screen.dart
+│       │   │   ├── locator/hospital_locator_screen.dart
+│       │   │   ├── profile/profile_screen.dart
+│       │   │   └── splash/splash_screen.dart
+│       │   └── shared/
+│       │       ├── providers/
+│       │       │   ├── auth_provider.dart
+│       │       │   ├── chat_provider.dart
+│       │       │   ├── history_provider.dart
+│       │       │   ├── locator_provider.dart
+│       │       │   └── triage_provider.dart
+│       │       └── widgets/
+│       │           ├── acv_button.dart
+│       │           ├── acv_card.dart
+│       │           ├── acv_error_view.dart
+│       │           ├── acv_input.dart
+│       │           └── urgency_badge.dart
+│       ├── linux/
+│       │   └── runner/
+│       │       ├── CMakeLists.txt
+│       │       ├── my_application.cc
+│       │       └── my_application.h
+│       ├── macos/
+│       │   ├── .gitignore
+│       │   ├── Flutter/
+│       │   ├── Runner/
+│       │   │   ├── AppDelegate.swift
+│       │   │   ├── Assets.xcassets/
+│       │   │   │   └── AppIcon.appiconset/
+│       │   │   │       ├── Contents.json
+│       │   │   │       ├── app_icon_16.png
+│       │   │   │       ├── app_icon_32.png
+│       │   │   │       ├── app_icon_64.png
+│       │   │   │       ├── app_icon_128.png
+│       │   │   │       ├── app_icon_256.png
+│       │   │   │       ├── app_icon_512.png
+│       │   │   │       └── app_icon_1024.png
+│       │   │   ├── Base.lproj/
+│       │   │   ├── Configs/
+│       │   │   │   ├── AppInfo.xcconfig
+│       │   │   │   ├── Debug.xcconfig
+│       │   │   │   ├── Release.xcconfig
+│       │   │   │   └── Warnings.xcconfig
+│       │   │   ├── DebugProfile.entitlements
+│       │   │   ├── Info.plist
+│       │   │   ├── MainFlutterWindow.swift
+│       │   │   └── Release.entitlements
+│       │   ├── Runner.xcodeproj/
+│       │   │   ├── project.pbxproj
+│       │   │   └── xcshareddata/xcschemes/Runner.xcscheme
+│       │   └── Runner.xcworkspace/
+│       ├── test/
+│       │   └── widget_test.dart
+│       ├── web/
+│       │   ├── favicon.png
+│       │   ├── icons/
+│       │   │   ├── Icon-192.png
+│       │   │   ├── Icon-512.png
+│       │   │   ├── Icon-maskable-192.png
+│       │   │   └── Icon-maskable-512.png
+│       │   ├── index.html
+│       │   └── manifest.json
+│       └── windows/
+│           ├── .gitignore
+│           ├── CMakeLists.txt
+│           ├── flutter/
+│           └── runner/
+│               ├── CMakeLists.txt
+│               ├── Runner.rc
+│               ├── runner.exe.manifest
+│               ├── flutter_window.cpp
+│               ├── flutter_window.h
+│               ├── main.cpp
+│               ├── resource.h
+│               ├── utils.cpp
+│               ├── utils.h
+│               ├── win32_window.cpp
+│               └── win32_window.h
+└── infra/
+    └── nginx/                      # Infrastructure configuration directory
 ```
 
 ---
