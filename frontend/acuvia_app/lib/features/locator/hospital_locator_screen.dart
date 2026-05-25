@@ -385,7 +385,7 @@ out center;
             initialCenter:
                 _userLocation ?? const LatLng(10.3157, 123.8854),
             initialZoom: 14,
-            onTap: (_, __) => setState(() => _selected = null),
+            onTap: (_, _) => setState(() => _selected = null),
           ),
           children: [
             TileLayer(
@@ -403,7 +403,7 @@ out center;
                     height: 48,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: _primary.withOpacity(0.15),
+                        color: _primary.withValues(alpha: 0.15),
                         shape: BoxShape.circle,
                         border: Border.all(color: _primary, width: 2.5),
                       ),
@@ -435,7 +435,7 @@ out center;
                                 color: (_selected == h
                                         ? _teal
                                         : _primary)
-                                    .withOpacity(0.4),
+                                    .withValues(alpha: 0.4),
                                 blurRadius: 8,
                                 offset: const Offset(0, 3),
                               ),
@@ -535,7 +535,7 @@ out center;
                           color: const Color(0xFF43A047), width: 1.5),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.07),
+                          color: Colors.black.withValues(alpha: 0.07),
                           blurRadius: 8,
                         ),
                       ],
@@ -545,7 +545,7 @@ out center;
                         Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF43A047).withOpacity(0.12),
+                            color: const Color(0xFF43A047).withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Icon(Icons.recommend_rounded,
@@ -624,7 +624,7 @@ out center;
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black.withValues(alpha: 0.08),
                     blurRadius: 6,
                   ),
                 ],
@@ -686,7 +686,7 @@ out center;
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               itemCount: _filtered.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
+              separatorBuilder: (_, _) => const SizedBox(width: 12),
               itemBuilder: (_, i) => _buildHospitalCard(_filtered[i]),
             ),
           ),
@@ -723,7 +723,7 @@ out center;
         width: 220,
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: isSelected ? _primary.withOpacity(0.08) : Colors.white,
+          color: isSelected ? _primary.withValues(alpha: 0.08) : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isSelected ? _primary : const Color(0xFFEEEEEE),
@@ -739,7 +739,7 @@ out center;
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: _primary.withOpacity(0.1),
+                    color: _primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(Icons.local_hospital_rounded,
@@ -751,7 +751,7 @@ out center;
                   padding: const EdgeInsets.symmetric(
                       horizontal: 7, vertical: 3),
                   decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.12),
+                    color: statusColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(statusLabel,
@@ -823,7 +823,7 @@ class _FilterChip extends StatelessWidget {
           border: Border.all(color: selected ? color : const Color(0xFFDDDDDD)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.07),
+              color: Colors.black.withValues(alpha: 0.07),
               blurRadius: 6,
             ),
           ],
@@ -857,7 +857,7 @@ class _StatusBadge extends StatelessWidget {
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 8,
             ),
           ],
@@ -963,7 +963,7 @@ class _HospitalSheet extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: primaryColor.withOpacity(0.1),
+                  color: primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(Icons.local_hospital_rounded,
@@ -987,7 +987,7 @@ class _HospitalSheet extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: tealColor.withOpacity(0.12),
+                            color: tealColor.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -1004,7 +1004,7 @@ class _HospitalSheet extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: statusColor.withOpacity(0.12),
+                            color: statusColor.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Row(
