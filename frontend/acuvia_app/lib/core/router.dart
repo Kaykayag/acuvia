@@ -4,6 +4,7 @@ import '../auth/register_screen.dart';
 import '../auth/forgot_password_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/assessment/start_assessment_screen.dart';
+<<<<<<< HEAD
 import '../features/assessment/ai_analysis_screen.dart';
 import '../features/chatbot/chatbot_screen.dart';
 import '../features/history/history_screen.dart';
@@ -14,7 +15,20 @@ import '../features/profile/profile_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/login',
+=======
+import '../features/history/history_screen.dart'; 
+import '/features/learn/learn_screen.dart';
+import '/features/profile/profile_screen.dart';
+import '../features/splash/splash_screen.dart';
+
+final appRouter = GoRouter(
+  initialLocation: '/splash', //splash if final na 
+>>>>>>> 4ae2460 (feat:added splash)
   routes: [
+    GoRoute(
+      path: '/splash',
+      builder: (context, state) => const SplashScreen(),
+    ),
     GoRoute(
       path: '/home',
       builder: (context, state) => const HomeScreen(),
@@ -51,7 +65,11 @@ final appRouter = GoRouter(
     // ── History ──────────────────────────────────────────────────────────────
     GoRoute(
       path: '/history',
+<<<<<<< HEAD
       builder: (context, state) => const HistoryScreen(),
+=======
+      builder: (context, state) => const HistoryScreen(), 
+>>>>>>> 4ae2460 (feat:added splash)
     ),
 
     // ── Learn ────────────────────────────────────────────────────────────────

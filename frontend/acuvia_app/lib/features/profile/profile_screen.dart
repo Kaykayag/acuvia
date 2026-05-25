@@ -87,16 +87,18 @@ Widget buildBottomNav(BuildContext context, int currentIndex, StateSetter setSta
 class UserProfile {
   String firstName;
   String lastName;
+  String age;
+  String gender;
   String email;
-  String username;
   String phoneNumber;
   String address;
 
   UserProfile({
     this.firstName = 'John',
     this.lastName = 'Doe',
+    this.age = '25',
+    this.gender = 'Male',
     this.email = 'johndoe@gmail.com',
-    this.username = 'JohnDoe123',
     this.phoneNumber = '0912 345 6789',
     this.address = '123 Main St, City',
   });
@@ -332,12 +334,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               ),
             ),
             const SizedBox(height: 28),
-            _ViewField(label: 'First Name', value: _userProfile.firstName),
-            _ViewField(label: 'Last Name',  value: _userProfile.lastName),
-            _ViewField(label: 'Email',       value: _userProfile.email),
-            _ViewField(label: 'Username',    value: _userProfile.username),
-            _ViewField(label: 'Phone Number',value: _userProfile.phoneNumber),
-            _ViewField(label: 'Address',     value: _userProfile.address),
+            _ViewField(label: 'First Name',   value: _userProfile.firstName),
+            _ViewField(label: 'Last Name',    value: _userProfile.lastName),
+            _ViewField(label: 'Age',          value: _userProfile.age),
+            _ViewField(label: 'Gender',       value: _userProfile.gender),
+            _ViewField(label: 'Email',        value: _userProfile.email),
+            _ViewField(label: 'Phone Number', value: _userProfile.phoneNumber),
+            _ViewField(label: 'Address',      value: _userProfile.address),
           ],
         ),
       ),
@@ -358,25 +361,28 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   late final TextEditingController _firstName;
   late final TextEditingController _lastName;
+  late final TextEditingController _age;
   late final TextEditingController _email;
-  late final TextEditingController _username;
   late final TextEditingController _phone;
   late final TextEditingController _address;
+  String _gender = _userProfile.gender;
+
+  static const _genderOptions = ['Male', 'Female', 'Non-binary', 'Prefer not to say'];
 
   @override
   void initState() {
     super.initState();
     _firstName = TextEditingController(text: _userProfile.firstName);
     _lastName  = TextEditingController(text: _userProfile.lastName);
+    _age       = TextEditingController(text: _userProfile.age);
     _email     = TextEditingController(text: _userProfile.email);
-    _username  = TextEditingController(text: _userProfile.username);
     _phone     = TextEditingController(text: _userProfile.phoneNumber);
     _address   = TextEditingController(text: _userProfile.address);
   }
 
   @override
   void dispose() {
-    for (final c in [_firstName, _lastName, _email, _username, _phone, _address]) {
+    for (final c in [_firstName, _lastName, _age, _email, _phone, _address]) {
       c.dispose();
     }
     super.dispose();
@@ -385,8 +391,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void _save() {
     _userProfile.firstName   = _firstName.text.trim();
     _userProfile.lastName    = _lastName.text.trim();
+    _userProfile.age         = _age.text.trim();
+    _userProfile.gender      = _gender;
     _userProfile.email       = _email.text.trim();
-    _userProfile.username    = _username.text.trim();
     _userProfile.phoneNumber = _phone.text.trim();
     _userProfile.address     = _address.text.trim();
     Navigator.pop(context);
@@ -442,9 +449,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 Expanded(child: _EditField(label: 'Last Name',  controller: _lastName)),
               ],
             ),
-            _EditField(label: 'Email',        controller: _email,    keyboardType: TextInputType.emailAddress),
-            _EditField(label: 'Username',     controller: _username),
-            _EditField(label: 'Phone Number', controller: _phone,    keyboardType: TextInputType.phone),
+            // Age + Gender row
+            Row(
+              children: [
+                Expanded(child: _EditField(label: 'Age', controller: _age, keyboardType: TextInputType.number)),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _GenderDropdown(
+                    value: _gender,
+                    options: _genderOptions,
+                    onChanged: (v) => setState(() => _gender = v ?? _gender),
+                  ),
+                ),
+              ],
+            ),
+            _EditField(label: 'Email',        controller: _email, keyboardType: TextInputType.emailAddress),
+            _EditField(label: 'Phone Number', controller: _phone, keyboardType: TextInputType.phone),
             _EditField(label: 'Address',      controller: _address),
 
             const SizedBox(height: 24),
@@ -1092,6 +1112,53 @@ class _ViewField extends StatelessWidget {
             child: Text(value,
                 style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500,
                     color: Color(0xFF111111))),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GenderDropdown extends StatelessWidget {
+  final String value;
+  final List<String> options;
+  final ValueChanged<String?> onChanged;
+
+  const _GenderDropdown({
+    required this.value,
+    required this.options,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Gender',
+              style: TextStyle(fontSize: 12, color: Color(0xFF9E9E9E))),
+          const SizedBox(height: 6),
+          DropdownButtonFormField<String>(
+            value: value,
+            items: options
+                .map((g) => DropdownMenuItem(value: g, child: Text(g)))
+                .toList(),
+            onChanged: onChanged,
+            style: const TextStyle(fontSize: 14, color: Color(0xFF111111)),
+            decoration: InputDecoration(
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+              filled: true,
+              fillColor: const Color(0xFFF5F5F5),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none),
+              focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: _teal, width: 1.4)),
+            ),
           ),
         ],
       ),
