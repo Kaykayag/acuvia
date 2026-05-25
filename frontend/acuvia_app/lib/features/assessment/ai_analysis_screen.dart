@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/providers/triage_provider.dart';
 import '../../../data/models/triage.dart';
+import 'package:go_router/go_router.dart'; 
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Priority style helper
@@ -486,7 +487,7 @@ class _AiAnalysisScreenState extends ConsumerState<AiAnalysisScreen> {
                       Expanded(
                         child: OutlinedButton.icon(
                           onPressed: () =>
-                              Navigator.pushNamed(context, '/locator'),
+                            context.push('/locator'),
                           icon: const Icon(Icons.location_on_outlined,
                               size: 18),
                           label: const Text('Find Hospital'),

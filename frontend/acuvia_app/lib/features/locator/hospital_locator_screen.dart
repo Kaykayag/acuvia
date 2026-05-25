@@ -139,8 +139,10 @@ class _HospitalLocatorScreenState extends State<HospitalLocatorScreen> {
 
   // Suggestion: nearest open hospital
   _Hospital? get _suggestion {
+    if (_hospitals.isEmpty) return null;
     final open = _hospitals.where((h) => h.isOpen == true).toList();
-    return open.isNotEmpty ? open.first : null;
+    // Prefer the nearest open hospital, otherwise return the nearest overall
+    return open.isNotEmpty ? open.first : _hospitals.first;
   }
 
   @override
@@ -186,24 +188,33 @@ class _HospitalLocatorScreenState extends State<HospitalLocatorScreen> {
 
   // ── Overpass API ──────────────────────────────────────────────────────────
   Future<void> _fetchNearbyHospitals(LatLng center) async {
+
+
     setState(() { _searching = true; });
 
-    const radius = 5000;
+    // Radius is in meters: 15km for all, 5km if strictly looking for open
+    final int radius = _filter == 'all' ? 15000 : 5000; 
+
     final query = '''
 [out:json][timeout:25];
 (
   node["amenity"="hospital"](around:$radius,${center.latitude},${center.longitude});
   way["amenity"="hospital"](around:$radius,${center.latitude},${center.longitude});
   node["amenity"="clinic"](around:$radius,${center.latitude},${center.longitude});
+  way["amenity"="clinic"](around:$radius,${center.latitude},${center.longitude});
   node["healthcare"="hospital"](around:$radius,${center.latitude},${center.longitude});
+  node["healthcare"="clinic"](around:$radius,${center.latitude},${center.longitude});
 );
 out center;
 ''';
-
-    try {
+try {
       final res = await http.post(
         Uri.parse('https://overpass-api.de/api/interpreter'),
-        body: query,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'User-Agent': 'AcuviaApp/1.0 (Student Project)', // <-- This tells the server not to block you!
+        },
+        body: 'data=${Uri.encodeComponent(query)}',
       );
       if (res.statusCode != 200) throw Exception('API error');
 
@@ -215,7 +226,9 @@ out center;
         final tags = el['tags'] as Map<String, dynamic>?;
         if (tags == null) continue;
 
-        final name  = tags['name'] as String? ?? 'Unknown Hospital';
+        final name  = tags['name'] as String?;
+        if (name == null || name.isEmpty) continue;
+
         double? lat;
         double? lon;
 
@@ -231,7 +244,9 @@ out center;
 
         final pos  = LatLng(lat, lon);
         final dist = const Distance().as(LengthUnit.Kilometer, center, pos);
-        final hours = tags['opening_hours'] as String?;
+        
+        // Default to 24/7 if OSM is missing the opening hours tag for a hospital
+        final hours = tags['opening_hours'] as String? ?? '24/7';
 
         hospitals.add(_Hospital(
           name:         name,
@@ -248,6 +263,10 @@ out center;
 
       hospitals.sort((a, b) => a.distanceKm.compareTo(b.distanceKm));
       setState(() { _hospitals = hospitals; _searching = false; });
+      
+      if (hospitals.isNotEmpty) {
+        _mapController.move(hospitals.first.position, 13.5);
+      }
     } catch (e) {
       setState(() {
         _searching = false;
@@ -261,7 +280,7 @@ out center;
     final lat = hospital.position.latitude;
     final lon = hospital.position.longitude;
     final uri = Uri.parse(
-        'https://www.google.com/maps/dir/?api=1&destination=$lat,$lon');
+        'https://www.google.com/maps/search/?api=1&query=$lat,$lon');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
@@ -459,6 +478,7 @@ out center;
           left: 12,
           right: 12,
           child: Column(
+            
             children: [
               // Filter toggle
               Row(
@@ -468,14 +488,20 @@ out center;
                     label: 'All',
                     selected: _filter == 'all',
                     color: _primary,
-                    onTap: () => setState(() => _filter = 'all'),
+                    onTap: () async {
+                      setState(() => _filter = 'all');
+                      if (_userLocation != null) await _fetchNearbyHospitals(_userLocation!);
+                    },
                   ),
                   const SizedBox(width: 8),
                   _FilterChip(
                     label: '🟢 Open Now',
                     selected: _filter == 'open',
                     color: const Color(0xFF43A047),
-                    onTap: () => setState(() => _filter = 'open'),
+                    onTap: () async {
+                      setState(() => _filter = 'open');
+                      if (_userLocation != null) await _fetchNearbyHospitals(_userLocation!);
+                    },
                   ),
                 ],
               ),
@@ -485,16 +511,16 @@ out center;
               // Status badge
               if (_searching)
                 _StatusBadge(
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         width: 14,
                         height: 14,
                         child: CircularProgressIndicator(
                             strokeWidth: 2, color: _primary),
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Text('Finding nearby hospitals…',
                           style: TextStyle(
                               fontSize: 12,
@@ -532,7 +558,7 @@ out center;
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                          color: const Color(0xFF43A047), width: 1.5),
+                          color: suggestion.isOpen == true ? const Color(0xFF43A047) : _primary, width: 1.5),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withValues(alpha: 0.07),
@@ -545,7 +571,7 @@ out center;
                         Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF43A047).withValues(alpha: 0.12),
+                            color: (suggestion.isOpen == true ? const Color(0xFF43A047) : _primary).withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Icon(Icons.recommend_rounded,
@@ -556,17 +582,17 @@ out center;
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Nearest Open Hospital',
+                              Text(
+                                suggestion.isOpen == true ? 'Nearest Open Hospital' : 'Nearest Hospital',
                                 style: TextStyle(
                                   fontSize: 11,
-                                  color: Color(0xFF43A047),
+                                  color: suggestion.isOpen == true ? const Color(0xFF43A047) : _primary,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
                               Text(
                                 suggestion.name,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w700,
                                   color: _textDark,
@@ -595,15 +621,15 @@ out center;
                   _hospitals.isEmpty &&
                   _userLocation != null)
                 _StatusBadge(
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.info_outline_rounded,
+                      const Icon(Icons.info_outline_rounded,
                           color: _textSub, size: 16),
-                      SizedBox(width: 6),
-                      Text('No hospitals found within 5km.',
-                          style: TextStyle(
-                              fontSize: 12, color: _textSub)),
+                      const SizedBox(width: 6),
+                      Text(
+                          'No hospitals found within ${_filter == 'all' ? 15 : 5} km.',
+                          style: const TextStyle(fontSize: 12, color: _textSub)),
                     ],
                   ),
                 ),
@@ -774,7 +800,7 @@ out center;
             const SizedBox(height: 8),
             Text(
               h.name,
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   color: _textDark),
