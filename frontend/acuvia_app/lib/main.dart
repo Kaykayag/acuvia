@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MaterialApp.router(
         title: 'Acuvia',
+        debugShowCheckedModeBanner: false,
         routerConfig: appRouter,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),

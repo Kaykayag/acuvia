@@ -172,7 +172,7 @@ class _SplashScreenState extends State<SplashScreen>
                                 width: 130,
                                 height: 130,
                                 fit: BoxFit.contain,
-                                errorBuilder: (_, __, ___) => _FallbackLogo(),
+                                errorBuilder: (_, _, _) => _FallbackLogo(),
                               ),
                             ),
                           ),

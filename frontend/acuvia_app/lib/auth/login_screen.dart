@@ -210,8 +210,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return 'Email is required';
                 final emailRegex = RegExp(r'^[\w.+-]+@[\w-]+\.[a-z]{2,}$');
-                if (!emailRegex.hasMatch(v.trim()))
+                if (!emailRegex.hasMatch(v.trim())) {
                   return 'Enter a valid email';
+                }
                 return null;
               },
             ),
@@ -239,8 +240,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               },
               validator: (v) {
                 if (v == null || v.isEmpty) return 'Password is required';
-                if (v.length < 6)
+                if (v.length < 6) {
                   return 'Password must be at least 6 characters';
+                }
                 return null;
               },
             ),

@@ -94,11 +94,11 @@ class UserProfile {
   String address;
 
   UserProfile({
-    this.firstName = 'John',
-    this.lastName = 'Doe',
+    this.firstName = 'test ',
+    this.lastName = 'Acuvia',
     this.age = '25',
     this.gender = 'Male',
-    this.email = 'johndoe@gmail.com',
+    this.email = 'Acuvianto@gmail.com',
     this.phoneNumber = '0912 345 6789',
     this.address = '123 Main St, City',
   });
@@ -139,7 +139,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  int _currentIndex = 3;
+  final int _currentIndex = 3;
 
   @override
   Widget build(BuildContext context) {
@@ -177,7 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Image.asset(
                       'assets/avatar.png',
                       width: 84, height: 84, fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => const Icon(
+                      errorBuilder: (_, _, _) => const Icon(
                           Icons.person_rounded, size: 48, color: _teal),
                     ),
                   ),
@@ -328,7 +328,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 child: ClipOval(
                   child: Image.asset('assets/avatar.png',
                       width: 92, height: 92, fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => const Icon(
+                      errorBuilder: (_, _, _) => const Icon(
                           Icons.person_rounded, size: 52, color: _teal)),
                 ),
               ),
@@ -422,7 +422,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     child: ClipOval(
                       child: Image.asset('assets/avatar.png',
                           width: 92, height: 92, fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Icon(
+                          errorBuilder: (_, _, _) => const Icon(
                               Icons.person_rounded, size: 52, color: _teal)),
                     ),
                   ),
@@ -522,14 +522,14 @@ class EmergencyScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: const Color(0xFFFFEBEE),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: const Color(0xFFE53935).withOpacity(0.3)),
+              border: Border.all(color: const Color(0xFFE53935).withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [
                 Container(
                   width: 44, height: 44,
                   decoration: BoxDecoration(
-                      color: const Color(0xFFE53935).withOpacity(0.12),
+                      color: const Color(0xFFE53935).withValues(alpha: 0.12),
                       shape: BoxShape.circle),
                   child: const Icon(Icons.warning_amber_rounded,
                       color: Color(0xFFE53935), size: 24),
@@ -582,8 +582,8 @@ class _HotlineTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: hotline.color.withOpacity(0.3)),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04),
+        border: Border.all(color: hotline.color.withValues(alpha: 0.3)),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 6, offset: const Offset(0, 2))],
       ),
       child: Row(
@@ -591,7 +591,7 @@ class _HotlineTile extends StatelessWidget {
           Container(
             width: 40, height: 40,
             decoration: BoxDecoration(
-                color: hotline.color.withOpacity(0.1), shape: BoxShape.circle),
+                color: hotline.color.withValues(alpha: 0.1), shape: BoxShape.circle),
             child: Icon(Icons.phone_rounded, color: hotline.color, size: 18),
           ),
           const SizedBox(width: 12),
@@ -614,7 +614,7 @@ class _HotlineTile extends StatelessWidget {
             child: Container(
               width: 36, height: 36,
               decoration: BoxDecoration(
-                  color: hotline.color.withOpacity(0.1), shape: BoxShape.circle),
+                  color: hotline.color.withValues(alpha: 0.1), shape: BoxShape.circle),
               child: Icon(Icons.call_rounded, color: hotline.color, size: 18),
             ),
           ),
@@ -733,7 +733,7 @@ class _ContactTile extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xFFE0E0E0)),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 6, offset: const Offset(0, 2))],
       ),
       child: Row(
@@ -744,7 +744,7 @@ class _ContactTile extends StatelessWidget {
             child: ClipOval(
               child: Image.asset('assets/avatar.png',
                   width: 44, height: 44, fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) =>
+                  errorBuilder: (_, _, _) =>
                       const Icon(Icons.person_rounded, color: _teal, size: 24)),
             ),
           ),
@@ -767,7 +767,7 @@ class _ContactTile extends StatelessWidget {
             child: Container(
               width: 36, height: 36,
               decoration: BoxDecoration(
-                  color: _teal.withOpacity(0.1), shape: BoxShape.circle),
+                  color: _teal.withValues(alpha: 0.1), shape: BoxShape.circle),
               child: const Icon(Icons.phone_outlined, color: _teal, size: 18),
             ),
           ),
@@ -888,7 +888,7 @@ class _FaqScreenState extends State<FaqScreen> {
       body: ListView.separated(
         padding: const EdgeInsets.fromLTRB(18, 16, 18, 24),
         itemCount: _faqs.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 10),
+        separatorBuilder: (_, _) => const SizedBox(height: 10),
         itemBuilder: (context, index) {
           final faq = _faqs[index];
           final isOpen = _expanded == index;
@@ -901,8 +901,8 @@ class _FaqScreenState extends State<FaqScreen> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                    color: isOpen ? _primaryColor.withOpacity(0.5) : const Color(0xFFE0E0E0)),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04),
+                    color: isOpen ? _primaryColor.withValues(alpha: 0.5) : const Color(0xFFE0E0E0)),
+                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 6, offset: const Offset(0, 2))],
               ),
               child: Column(
@@ -915,7 +915,7 @@ class _FaqScreenState extends State<FaqScreen> {
                         Container(
                           width: 28, height: 28,
                           decoration: BoxDecoration(
-                            color: _primaryColor.withOpacity(0.1),
+                            color: _primaryColor.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Center(
@@ -941,7 +941,7 @@ class _FaqScreenState extends State<FaqScreen> {
                     ),
                   ),
                   if (isOpen) ...[
-                    Divider(color: _primaryColor.withOpacity(0.15), height: 1),
+                    Divider(color: _primaryColor.withValues(alpha: 0.15), height: 1),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
                       child: Text(faq.answer,
@@ -1069,7 +1069,7 @@ class _MenuItem extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: const Color(0xFFE0E0E0)),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 6, offset: const Offset(0, 2))],
         ),
         child: Row(
@@ -1141,7 +1141,7 @@ class _GenderDropdown extends StatelessWidget {
               style: TextStyle(fontSize: 12, color: Color(0xFF9E9E9E))),
           const SizedBox(height: 6),
           DropdownButtonFormField<String>(
-            value: value,
+            initialValue: value,
             items: options
                 .map((g) => DropdownMenuItem(value: g, child: Text(g)))
                 .toList(),

@@ -87,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
           // Welcome text
           const Text(
-            'Welcome, John!',
+            'Welcome, Acuvian!',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w700,
